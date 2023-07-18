@@ -1,0 +1,87 @@
+---
+title: Complete Guide to Widget Tree
+description: What are widgets and widget tree
+---
+
+
+There is a saying in Flutter that _everything_ is a widget. But you can go a little deeper and say that a Flutter app is a big tree of widgets .......... a **Widget Tree**.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/KSt1qSNY1O0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+## What is a Widget
+
+To understand what a widget tree is, we need to understand what a widget is. A widget is the fundamental building block of a Flutter application. It is a blueprint that tells flutter (and eventually your device) how you want your application to look, and behave. 
+
+![three buttons](/images/flutter_widget_tree_1.png)
+
+This image above has 14 widgets in it. The first one is a `Row` widget, then there are 3 `Column` widgets, and each column has an `Icon` widget and a `Text` widget. This is what it looks like with each widget highlighted.
+
+![three buttons outlined](/images/flutter_widget_tree_2.png)
+
+There is a whole <a href="https://docs.flutter.dev/reference/widgets" target="_blank">gigantic library</a> of these widgets and they can do everything from detecting a touch input, to setting your layout, to navigating within the app. The sheer number of widgets seems daunting at first, but don't worry. To build basic apps you won't need to use most of them, and then you can add more fancy ones in as you need them.
+
+One of the most used widgets is called `Container`. It's the most used because it's so flexible. If you are coming from web development `Container` is similar to a `div` element. Every widget that Flutter provides is configurable, and the special thing about `Container` is that it's one of the most configurable.
+
+### Configuring a Widget
+
+Configuring a widget means to change something about it. For example, the `Text` widget has configurations to change the styling and we do this through a property called `style`. 
+
+```dart
+Text(
+    "Hello",
+    style: TextStyle(color: Colors.white),
+)
+```
+
+The `AppBar` widget has a configuration to change the color using the `backgroundColor` property. 
+
+```dart
+AppBar(
+    backgroundColor: Colors.blue,
+    title: const Text("Title"),
+)
+```
+
+The `Container` widget I keep talking about is *extra* configurable. You can do things like this:
+
+```dart
+Container(
+    height: 200,
+    width: 200,
+    margin: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+        border: Border.all(color: Colors.black, width: 20),
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.blue,
+    ),
+    child: const Text(
+        "Tadas",
+        style: TextStyle(color: Colors.white),
+    ),
+)
+```
+
+
+And this takes a widget that without any configuration would not even be visible, to this beautiful blue square with a black border and some text:
+
+![blue square with black border and text hello inside](/images/flutter_widget_tree_3.png)
+
+## What is a Widget Tree
+
+To build out your full application you need to take these widgets, and organize them in a tree-like structure called a "Widget Tree" that becomes the structure of your whole application. Let's take the previous example with the highlighted row of icons and texts.
+
+![three buttons outlined](/images/flutter_widget_tree_2.png)
+
+The widget tree for this layout would look like this:
+
+![widget tree for the button example](/images/flutter_widget_tree_4.png)
+
+You start with wrapping the whole thing with a `Container` widget, followed by a `Row` where we will put all those icons. Each item in the row will have a `Column` widget with an `Icon` stacked on top of a `Text` widget that is within another `Container`. And this widget tree is the blueprint used to render our row of icons.
+
+This is a very important concept to understand since this is how your Flutter app is built. You write the code to create this widget tree, and Flutter uses that widget tree as a blueprint to render your application to all these devices. As you develop in Flutter you will run into problems with state management or layouts or some other complex problems. By understanding the widget tree you will be able to work through it and and eventually solve them.
+
+## Widget Inspector in DevTools
+
+Speaking of complex problems Flutter has a debugging tool called the Widget Inspector. Whilst you are running your application you can open the Widget Inspector and see the widget tree that is currently built. You can also access details of a specific widget when you click on it and even adjust some layout properties and see them reflected in your application. It's a very powerful tool.
+
+![widget inspector page](/images/flutter_widget_tree_5.png)

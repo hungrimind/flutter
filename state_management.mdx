@@ -1,0 +1,235 @@
+---
+title: Complete Guide to State Management
+description: What is State management and why do we need it?
+---
+
+State management is absolutely crucial once you are build an app that has some complexity. It is a tough topic, but at the core it's quite simple. I will try to break it down for you in the simplest way that I can. This is the complete guide to state management.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/VcS0Qa2lw3g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe> 
+
+## What is State?
+If we break down the phrase **State Management** you can see that it is a way to **manage** your **state**. But what is `State`?
+
+There are two types of data you can have in an application. You can either have regular data/information (that is hard coded and cannot change) or you can have **state** which is "fancy data" that can be updated. 
+
+The most common example of state is user information. You might create a `UserInfo` state that can be used and updated within your application. For example, you might have a `Hello, Tadas` displayed on your home screen, and the `Tadas` part of the information would be retrieved from your `UserInfo` state. And if I wanted to change my name to `T-Dog` I could go into the settings page and update my `UserInfo` state there.
+
+There are many more examples of state within application: News Feed, Follower Count, Todo Items, Countdown Timer, etc. 
+
+The simplest definition is that state is just data that can be changed (within a widget).
+
+## What is Management?
+State management is the topic of *managing* that **state**. What does it mean to manage it? And why is it important to do it?
+
+### Why?
+Let's take the above example of having a `UserInfo` state that holds information about the current user. There are so many ways that the information here can get updated.
+
+* When the user creates an account.
+* In the settings page.
+* Whenever they are followed.
+
+As well as many places that the information can be read.
+
+* Name on the home page.
+* Name on the profile page.
+* Profile picture on every page.
+* Follower count on profile page. 
+* Whether they are following specific person on their profile page.
+
+And there are many more examples. So what would happen if we didn't have any state management and we needed to build an app that can do all the above?
+
+In order to see the information, you would need to pass the class containing all that information to **every. single. screen.** That sounds bad, but what's even worse? It can be updated from many places. So let's say the user decides to change their name to `T-Dog`. Without state management, it will only get updated on one screen, so you would need to set up some way to let every single other screen know that the name got updated. 
+
+This sounds like a complex mess. Thankfully we have state management. 
+
+A proper State Management solution solves two problems. 
+
+1. It centralizes all the data in one place, so there is a single source of truth.
+2. Updates the UI whenever there have been changes in that data.
+
+> #### Set State
+> `setState` is the simplest form of state management. It can update your UI whenever you call it, but it is limited to a single widget by default. 
+
+## State Management using Flutter only
+If you've heard about the topic of state management, it's most likely come from people debating what package has the best state management solution. But you do not need to use a package in order to *manage your state*.
+
+In fact, every state management package has been built using Flutter itself, so of course it is possible to do this with strictly Flutter code. Let's walk through an example of how you can implement your own state management solution, for the basic starter counter app.
+
+> #### Warning!
+> This will be kinda complicated, but it will teach you what is happening under the hood of most state management packages.
+> If you are using a package you don't _**really**_ need to know this and can skip to [the next section](#why-use-a-package), but I would recommend reading through it.
+
+### Centralizing the Data
+The most important thing is having **one source of truth** for all the data related to a specific function. Since we are making a counter application the main (and only feature in this case) is the actual counter. For bigger applications you might have a collection of data about the user. So you would set up a `UserInfo` class to be the central location for everything related to the user's information. In this case we will create a class called `CounterState` within a `state.dart` file.
+
+```dart
+class CounterState {
+  CounterState({
+    required this.counter,
+  });
+
+  final int counter;
+
+  CounterState copyWith({
+    int? counter,
+  }) {
+    return CounterState(
+      counter: counter ?? this.counter,
+    );
+  }
+}
+```
+
+We have added a `copyWith` method that allows you to update the value of the class. So let's say you have instantiated the `CounterState` with a value of `1`. 
+
+> #### Note
+> You can use a VSCode extension called [**Dart Data Class Generator**](https://marketplace.visualstudio.com/items?itemName=dotup.dart-data-class-generator) to create this `copyWith` method for you.
+
+```dart
+CounterState _counterState = CounterState(counter: 1);
+```
+
+To update this value to `2` you would take the instantiated object and call the `copyWith` method.
+
+```dart
+_counterState.copyWith(counter: 2);
+```
+
+This might seem cumbersome given that it is only a counter that we are doing this with, but using this `copyWith` method is crucial when you have more than one piece of data. It allows you to to copy all the other data, and only change what you define within the `copyWith` method.
+
+### Providing the Data with Inherited Widget
+The state is now defined, but we need to be able to give access to this state to other parts of the application. To do this you need to use an `InheritedWidget`. You can find more information on [InheritedWidget on the Flutter Docs](https://api.flutter.dev/flutter/widgets/InheritedWidget-class.html), but the simple explanation is it allows widgets lower in the widget tree access to the data within the `InheritedWidget`. 
+
+First you have to define the `InheritedWidget`. I will name it `Provider` in this case because we will be providing the data to other parts of the app. 
+
+> You will see later why I named it this way.
+
+```dart
+class Provider extends InheritedWidget {
+  const Provider(this.data, {Key? key, required Widget child}) : super(key: key, child: child);
+
+  final CounterState data;
+
+  static CounterState of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<Provider>()!.data;
+  }
+
+  @override
+  bool updateShouldNotify(Provider oldWidget) {
+    return data != oldWidget.data;
+  }
+}
+```
+
+The `updateShouldNotify` function lets you define when the `InheritedWidget` should update your application. You would most likely want to update the app whenever the data changes, however you have the option to customize that. Either way, whenever your `updateShouldNotify` function returns `true` it lets all the widgets that are using your `data` state know that it should rebuild. In this case we are going to let our app know about the changes every time whenever the previous `data` doesn't match the current `data`. 
+
+Like I mentioned earlier, `InheritedWidget` lets the widgets that are found below it in the widget tree know that the data has been updated, and thus they get rebuilt. In this case we want all the affected widgets to know that the data has been updated, so we will wrap the whole application with our `InheritedWidget` which we named `Provider`.
+
+```dart
+void main() {
+  var _state = CounterState(counter: 1);
+  runApp(Provider(_state, child: const MyApp()));
+}
+```
+
+And now we have access to the current state within our application.
+```dart
+Text(
+    Provider.of(context).counter.toString(),
+),
+```
+
+### Updating the State
+This above solution is close, but we are missing a critical step, which is updating the state. We defined a constant `_state` variable that you can't really change. So we will need to create one more widget that holds the state. This widget will have 2 important roles:
+1. Hold the state.
+2. Be the only place where the state can get updated.
+   
+Why is that second point so important? Let's say you are working on a big application, that has counters all over the place. Let's say you decide that the counters should actually be incremented by 2 instead of 1. Now you would have to go through every place in the code that is updating counters and make sure that it gets incremented in the new and correct way. But having it all in one place, means you can just update it in that one place and it gets reflected throughout the rest of the application.
+
+Again, with a simple example like this it might not seem like such a big deal, but when you have a giant application it becomes a lot more important.
+
+The other big benefit is if you are running into a bug associated to some feature, it becomes a lot easier to figure out where the problem is, since it can only be happening in one place.
+
+So in this case we are going to create a class called `AppStateHolder`. Just like the name suggests it will hold the **app state** which in this case is a `CounterState`, and it will have functions that will be the interface for the rest of the application to update the `CounterState` using the `copyWith` method. 
+
+```dart
+class AppStateHolder extends StatefulWidget {
+  const AppStateHolder({required this.child, Key? key}) : super(key: key);
+
+  final Widget child;
+
+  static AppStateHolderState of(BuildContext context) {
+    return context.findAncestorStateOfType<AppStateHolderState>()!;
+  }
+
+  @override
+  AppStateHolderState createState() => AppStateHolderState();
+}
+
+class AppStateHolderState extends State<AppStateHolder> {
+  CounterState _counterState = CounterState(counter: 0);
+
+  void add() {
+    int newCounter = _counterState.counter + 1;
+    setState(() {
+      _counterState = _counterState.copyWith(counter: newCounter);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Provider(
+      _counterState,
+      child: widget.child,
+    );
+  }
+}
+```
+
+This looks like a lot of boilerplate code, but really it's doing only those two things mentioned above. It holds the state and passes it to the rest of our app using the `Provider`, and now it also allows us to update that state using the `add()` function. 
+
+### Using the State within your App
+To finally put everything together need to change from wrapping our whole app with the `Provider` to instead wrapping it with `AppStateHolder`. 
+> Note: This still internally wraps it with a `Provider` inside the `AppStateHolder`
+
+```dart
+void main() {
+  runApp(const AppStateHolder(child: MyApp()));
+}
+```
+
+Now we have access to a full state management solution for our counter application. 
+
+We can access the current counter state using `Provider.of(context).counter`, and we can update the state of the application using `AppStateHolder.of(context).add()`. 
+
+As you could see from this example, it was a lot of set up just to get a stupid little counter to work. I feel like there could be some pre-written code to make it a bit easier....(read the next section)
+
+### Example Code
+The example code for this is located [here](https://github.com/hungrimind/website/tree/main/code/flutter/state_management)
+
+## Why use a package?
+Hopefully it is pretty clear why from the previous section. But I want to make it clear, you by no means **have** to use one. If your app is simple enough, just using `setState` is enough. If you are working at a big enough organization it might even be worth it to build your own complete state management solution that you have full control of. But for me personally, using a package is the way to go. 
+
+Packages do something similar to what we did, but with more features and more robust, while at the same time making it a lot less set up for the developer.
+
+## Options
+I can only really recommend two options, and these recommendations are my own personal opinion.
+
+### [Riverpod](https://riverpod.dev)
+Riverpod is my favorite option, and the one I would recommend for most people to use. If you understood the example that we covered, you will notice some similarities between that and Riverpod. Riverpod uses `Providers` to provide data to the rest of your application. For holding state you should use a `NotifierProvider` which 
+1. Provides the state to your application.
+2. Creates an interface to update that state using a `Notifier`.
+
+You will notice this will look similar to what we created above, just with way less boilerplate. 
+
+If you want to dive deeper on how you would Riverpod with Firebase, which is the most popular database choice for Flutter apps, I have built [a whole course just on that.](/flutter/login-with-riverpod-and-firebase)
+
+In my opinion, Riverpod is the least boilerplate, while also utilizing the core Flutter features properly.
+
+### [Bloc](https://bloclibrary.dev/#/)
+Bloc is another very popular solution within the Flutter community. It is known to scale well, and be a good solution to big projects.
+
+Once again this is just my personal opinion, but I don't choose Bloc because there is a lot of boilerplate again. Although probably less than setting it up yourself, there is the Bloc paradigm that you have to learn. This could be seen as a positive because it forces you to follow good code practices, but I personally enjoy packages with less overhead.
+
+### Others
+There are many other options, so feel free to explore, but these 2 are the big dogs in the Flutter community, and you  can't go wrong with either.

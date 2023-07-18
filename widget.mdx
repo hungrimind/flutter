@@ -1,0 +1,58 @@
+---
+title: What is a Widget
+description: A Widget is the fundamental building block of Flutter, this article breaks it down.
+---
+
+A `Widget` is the fundamental building block of Flutter. There is even a saying in the Flutter community that _everything_ is a Widget. But what does that mean, and how does it work?
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/vlMNGEuN8js" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+## Two Types of Widgets
+In Flutter there are 2 types of Widgets that you can use. `StatelessWidget` and `StatefulWidget`. Now there are some smart people on the Flutter team, and you can see that they chose these names carefully. I bet you know the difference between the two without me even having to explain it. 
+
+`StatelessWidget`s are **State-Less** while `StatefulWidget`s are **State-Full**. The first one doesn't have a `State` associated with it, while the second one definitely does. But what is a State?
+
+### What is State?
+The simple version is that state is just data that can be changed (within a widget). If you are just displaying something to the user that cannot be altered, like some static text in your app, that does **NOT** have any state. But if you were displaying a counter that can be triggered to count up or down within your application, that count value would be considered your state.
+
+## Stateless Widgets
+So `StatelessWidget` does not contain any state. You are simply just adding it into the <a href="/flutter/widget_tree">Widget Tree</a> of your application to display something. And what it looks like depends on the configuration of the widget itself and the <a href="/flutter/buildcontext">BuildContext</a>. Some examples of StatelessWidgets are `Text`, `ListTile`, and `FlutterLogo`.
+ 
+Although a `StatelessWidget` can't change, it can be completely rebuilt (which is a normal thing that happens in a Flutter app all the time). It can be built or rebuilt in 3 different situations. 
+1. The very first time it is built.
+2. If it's parent widget changes.
+3. If your widget depends on an InheritedWidget, whenever that changes.
+
+## Stateful Widgets
+StatefulWidgets are themselves immutable, just like StatelessWidgets, but they hold a separate State object which is created by calling the `createState` method. 
+
+```dart
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({
+    super.key,
+  });
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+```
+
+Each StatefulWidget comes with 2 classes. First the `StatefulWidget` itself and then a `State` widget which holds the `build` method and all the logic. 
+
+Within this `State` you can add variables (aka the data or "state") that can be manipulated. And every time it is manipulated, if you want to trigger a rebuild so that your app UI get's updated, you do that using `setState`. 
+
+So along with all the options we had to rebuild a `StatelessWidget`, we have one more option of rebuilding here, which is by manually causing it to update, whenever your data changes.
+
+Whenever you create a flutter project the started applications is a counter app with a very simple `StatefulWidget` that increments the counter. Whenever you press the `+` icon, in increments the `_counter` value and calls `setState` to trigger a rebuild of the `StatefulWidget` and you see the counter value change.
+
+> #### Side Note
+> There are ways to update your UI automatically, usually using State Management. But this might still use setState under the hood.
+
+
+## Under the hood
+To understand what's really going on under the hood of `StatelessWidget` and `StatefulWidget` we have to go back to the <a href="/flutter/widget_tree">Widget Tree</a>. A Widget Tree is a tree of widgets that define a blueprint for how your application should look and behave. The Element Tree and the Render Tree are using that blueprint to actually implement those looks and behaviors.
+
+The difference between `StatelessWidget` and `StatefulWidget` can be found in the Element Tree. 
+
+<img src="/flutter/buildcontext/element_tree.png" alt="element tree relating to widget tree"/>
+
+The Element Tree is in charge of the location and state of the widget. You can read more about that in the <a href="/flutter/buildcontext#deep-dive">BuildContext</a> doc. So while `StatelessWidget`s just create an `Element` in the Element Tree, `StatefulWidget`s create an `Element` and an associated state with that `Element`. And understanding this will be important when using <a href="/flutter/keys">Keys</a>.

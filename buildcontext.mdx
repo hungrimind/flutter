@@ -1,0 +1,86 @@
+---
+title: Complete Guide to BuildContext
+description: Why is BuildContext such a building block of Flutter?
+---
+
+BuildContext is something many developers don't fully understand, but they know how to use it. However understanding what it is can help you solve some of the nastiest bugs.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/nfhncZXbFu8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+## Quick Answer
+`BuildContext` is a way for your widget to know it's own location within the <a href="/flutter/widget_tree">Widget Tree</a>.
+
+In other words it gives you ***context*** about it's location. If you were blindfolded and dropped off in a random city, you would look at the context around you to figure out where you are. Maybe you would check the street signs, the position of the sun, or some landmarks to figure out where you are. `BuildContext` are those signs and landmarks for each widgets location within the <a href="/flutter/widget_tree">Widget Tree</a>. 
+
+BuildContext is most commonly used to look up the Widget Tree and locate specific widgets. For example when you use `Theme.of(context)` or `Navigator.of(context)` you are looking up the Widget Tree to find the `Theme` or `Navigator` that coincides with the location of the current widget where you are calling those functions from.
+
+> #### Side Note before the Deep Dive
+> We're going to get deep into how Flutter works under the hood. For me learning about this is fun, but there is a reason why Flutter was built as a "framework" or "toolkit" or whatever you want to call it. That's because you don't need to know this when you're working with it day to day. All these things are abstracted to make it easier for you to develop your application. So if the only thing you remember from this doc is that `BuildContext` gives you location within the widget tree, you are solid 👍. But if you're a nerd like me and like understanding how stuff works, this next section will be fun!
+
+## Deep Dive
+
+### "Everything is a widget" is a lie!
+If you heard the phrase in the Flutter community that "Everything is a widget", you have been lied to! 😳 .... Well, only partially. Most of the time the developer only interfaces with widgets, but there is a lot more going on behind the scenes. 
+
+You can think of a `Widget` as a blueprint for what you want Flutter and eventually the code to build. These blueprints are used to create an Element Tree and a Render Tree. The Element Tree handles the lifecycle of the application, and the Render Tree is in charge of displaying the UI. In terms of the `BuildContext` we only care about the Element Tree.
+
+![3 different trees](/images/flutter_buildcontext_1.png)
+
+## Element Tree
+Each Flutter `Widget` has a corresponding `Element`. These elements within the Element Tree have 2 very specific purposes. 
+1. Hold the references to the parents and child widgets.
+2. Hold the state of the widget
+
+![element tree relating to widget tree](/images/flutter_buildcontext_2.png)
+
+
+We get into how state works within the Element Tree in a separate doc, but the first part of what an Element does is literally the `BuildContext`. If you dive deep into the Flutter code, you will find the definition of `Element`
+
+```dart
+/// An instantiation of a [Widget] at a particular location in the tree.
+///
+/// An [Element] represents the use of a widget to configure a specific location
+/// in the tree. 
+abstract class Element extends DiagnosticableTree implements BuildContext
+```
+
+So an Element is an implementation of `BuildContext`, and thus when we use `BuildContext` within our application we are getting access to this Element in the Element Tree to find out where we are located.
+
+> #### Side Note
+> Since the Element Tree is a "tree" you can only get location information above and below the current Widget. You cannot get information to any widgets to the side of the current one. `BuildContext` provides location vertically, but not horizontally.
+
+## Fun Story
+Back in the day, before Flutter 2.0 was released, there was no such thing as a `ScaffoldMessenger` widget.  The way you would display a snack bar within your Flutter application was by using `Scaffold.of(context).showSnackbar()` which caused the following code to show an error. 
+
+#### Sample Code
+```dart
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: RaisedButton(
+          color: Colors.pink,
+          textColor: Colors.white,
+          onPressed: (){
+            final snackBar = SnackBar(content: Text('Hello'));
+            Scaffold.of(context).showSnackBar(snackBar);
+          },
+          child: Text('Display SnackBar'),
+        ),
+      ),
+    );
+  }
+}
+```
+
+#### Error
+```
+Scaffold.of() called with a context that does not contain a Scaffold.
+```
+
+But how does this makes sense? If you look at the code there is clearly a `Scaffold` and the context is used within it. You have to be careful with situations like these. Look again, and what `context` is being used. It's using the `context` that belongs to the HomePage widget. The `BuildContext` in this case is looking at the widgets above the `HomePage` for a `Scaffold`, but not within it.
+
+![scaffold](/images/flutter_buildcontext_3.png)
+
+Before we used to solve this by wrapping our button in a `Builder` widget which gives it's own context. But now since they added the `ScaffoldMessenger` widget this is no longer a worry, and you just use that instead.

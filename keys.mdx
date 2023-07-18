@@ -1,0 +1,119 @@
+---
+title: Complete Guide to Keys
+description: What are Keys used for in Flutter, and when to use them?
+---
+
+I feel like keys are something most Flutter developers know exist, but never really use, or know what they are for. Hopefully after reading this, you won't be one of those developers anymore
+
+## When to use Keys
+Most of the time you don't actually need to use Keys. But they are definitely needed when adding, removing or reordering Widgets of the same type that hold a state.
+
+I also like to use them for testing. Having a `Key` allows you to easily locate the specific `Widget` during your tests. 
+
+## Example
+The following is a simple example of when you would actually need to use a `Key` within your application. We are going to reorder a `StatefulWidget` that has a color state. 
+
+```dart
+class ColorTile extends StatefulWidget {
+  const ColorTile({super.key});
+
+  @override
+  State<ColorTile> createState() => _ColorTileState();
+}
+
+class _ColorTileState extends State<ColorTile> {
+  Color randomColor =
+      Colors.primaries[Random().nextInt(Colors.primaries.length)];
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 100,
+      height: 100,
+      color: randomColor,
+    );
+  }
+}
+```
+
+Put two of these colorful tiles in a `List`.
+
+```dart
+List<Widget> tiles = [
+  const ColorTile(),
+  const ColorTile(),
+];
+```
+
+Add them into a `Column` widget.
+
+```dart
+Column(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: <Widget>[
+    tiles[0],
+    tiles[1],
+  ],
+),
+```
+
+Now let's say we want to reorder these Widgets like this.
+
+```dart
+tiles.insert(1, tiles.removeAt(0));
+```
+
+You will notice that the colors won't change. But if we add a `Key` to each colorful square like this you will notice they do change.
+
+```dart
+List<Widget> tiles = [
+  ColorTile(key: UniqueKey()),
+  ColorTile(key: UniqueKey()),
+];
+```
+
+## Under the hood
+So what's going on here. It's all centered around the Element Tree. If you don't know what an Element Tree is I recommend reading about it in the <a href="/flutter/buildcontext#deep-dive">BuildContext</a> doc.
+
+
+We can also deep into the Flutter code you will find a function within the definition for `Widget` (which is what all of Flutter is based on). You will notice the way Flutter determines if the Widget needs to be updated or rebuilt is based on two things: `runtimeType` and `key`. If you don't use a `Key`, the key is still always checked but it would be `null` and `null == null` is valid.
+
+```dart 
+static bool canUpdate(Widget oldWidget, Widget newWidget) {
+  return oldWidget.runtimeType == newWidget.runtimeType
+    && oldWidget.key == newWidget.key;
+}
+```
+
+Let's say we have this following Widget and Element Tree pair. This is what the tree would look like for our initial example without Keys.
+
+![element tree relating to widget tree](/images/flutter_keys_1.png)
+
+If we try to swap these two Widgets we will check that `canUpdate` function, and since there are no keys, it will check that they are both of the same type `ColorTile` and update the Widget tree saying that everything is good to go.
+
+![swapping elements in the Element tree without keys](/images/flutter_keys_2.png)
+
+But it clearly is not all good because the colors don't change. The state doesn't get checked, so the colors don't actually swap.
+
+But then you add a `UniqueKey` to each of them and now the keys will not match, so a new Widget will need to be found with a matching Key.
+
+![swapping elements in the Element tree with keys](/images/flutter_keys_3.png)
+
+This was a deep dive into a simplistic example, but the overall gist, is if you have Stateful Widgets of the same type, that are getting added, removed, or reordered, you might run into situations like this and need to use Keys.
+
+## Different Types of Keys
+
+### ValueKey
+Value Key are used when you have something that would be unique to that specific widget. For example if you have a list, you might use each entry's ID as a ValueKey.
+
+### ObjectKey
+If you don't have any unique identifiers to use as a `Key` but the `Object`, or collection of identifiers, is unique, then ObjectKey is a good way to go.
+
+### UniqueKey
+If you have nothing that can distinguish between the different entries, then UniqueKey is the option.
+
+### GlobalKeys
+GlobalKeys are a bit different, where they can be used like the above Keys, but you would normally use them for sharing the state and the context of that Widget. One very common example is using GlobalKey for `FormState`. Where you can use them to validate your input forms.
+
+```dart
+_signInKey.currentState!.validate()
+```
