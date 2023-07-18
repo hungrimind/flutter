@@ -26,3 +26,12 @@ doc/api/
 .flutter-plugins
 .flutter-plugins-dependencies
 .DS_Store
+
+code/**/android/
+code/**/ios/
+code/**/web/
+code/**/windows/
+code/**/macos/
+code/**/linux/
+
+!code/**/macos/Runner/DebugProfile.entitlements
