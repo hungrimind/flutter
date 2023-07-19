@@ -53,6 +53,6 @@ To understand what's really going on under the hood of `StatelessWidget` and `St
 
 The difference between `StatelessWidget` and `StatefulWidget` can be found in the Element Tree. 
 
-<img src="/flutter/buildcontext/element_tree.png" alt="element tree relating to widget tree"/>
+![element tree relating to widget tree](/images/flutter_buildcontext_2.png)
 
 The Element Tree is in charge of the location and state of the widget. You can read more about that in the <a href="/flutter/buildcontext#deep-dive">BuildContext</a> doc. So while `StatelessWidget`s just create an `Element` in the Element Tree, `StatefulWidget`s create an `Element` and an associated state with that `Element`. And understanding this will be important when using <a href="/flutter/keys">Keys</a>.
