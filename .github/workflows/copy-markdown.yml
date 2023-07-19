@@ -1,0 +1,37 @@
+name: build documentation and publish
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Pushes docs to repo
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: "docs"
+          destination-github-username: "hungrimind"
+          destination-repository-name: "website"
+          user-email: tadas@tadaspetra.com
+          target-branch: beta
+          target-directory: "src/content/docs/flutter"
+      - name: Pushes images to repo
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: "images"
+          destination-github-username: "hungrimind"
+          destination-repository-name: "website"
+          user-email: tadas@tadaspetra.com
+          target-branch: beta
+          target-directory: "public/images"
