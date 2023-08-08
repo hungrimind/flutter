@@ -1,0 +1,15 @@
+---
+title: Common Flutter Issues
+---
+
+## Keychain Sharing Error
+A recent Apple update now requires you to use keychain sharing when using an authentication service. To solve this go to your XCode project and select `Signing & Capabilities`. 
+
+Click `+ Capability` and add `Keychain Sharing`. Then once it's added click the plus button to add your app to sharing.
+
+![Keychain Sharing](/courses/keychain_sharing.png)
+
+## MacOS Network Error
+When debugging a MacOS project and trying to access anything on the web, you might run into a networking error. This is because by default MacOS projects don't let you do client side requests from the debugger. You can turn this on to allow requests in XCode under `Signing & Capabilities`.
+
+![MacOS Outgoing Connections](/images/tips_macos_network.png)
