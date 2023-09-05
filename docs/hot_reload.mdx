@@ -3,10 +3,10 @@ title: Hot Reload and Restart
 description: What do hot reload and hot restart do?
 ---
 
-One of the biggest benefits of using Flutter is that the development experience is fantastic. One part that adds to that experience is Hot Reload and Hot Restart which allows you to see changes updated in your app real time as you make them.
+One of the biggest benefits of using Flutter is that the development experience is fantastic. One part that adds to that experience is Hot Reload and Hot Restart which allows you to see changes updated in your app in real time as you make them.
 
 ## Debug Bar
-To use it you need to be within a debugging session. A debugging session is when you run the application on a device or emulator or website from your IDE (probably VSCode or Android Studio) to see your code working in action. Whilst you're in the debugging session you will see this bar 
+To use it you need to be within a debugging session. A debugging session is when you run the application on a device, emulator or website from your IDE (probably VSCode or Android Studio) to see your code working in action. Whilst you're in the debugging session you will see this bar 
 
 ![debug bar](/images/flutter_hot_reload_1.png)
 
@@ -17,15 +17,15 @@ Whenever you're in a debug session, this little bar gives you control of the exe
 
 You can pause the execution by clicking the pause button, and the bar will look like this
 
-![debug bar with paused menu](/images/flutter_hot_reload_2.png)
+![debug bar with a paused menu](/images/flutter_hot_reload_2.png)
 
-Going from left to right you options are:
+Going from left to right your options are:
 * **Continue** - Resume the execution of the code
 * **Step Over** - If there is a function call, run that function, and then stop the code right after it's done
 * **Step Into** - Take the next step of the execution, if there is a function step into that function
 * **Step Out** - If you stepped into a function, run the rest of the function, and stop where you would have if you did a Step Over
-* **Hot Reload** - Keep reading this page, we're going to go deeper on this
-* **Hot Restart** - Keep reading this page, we're going to go deeper on this
+* **Hot Reload** - Keep reading this page, we're going to go deeper into this
+* **Hot Restart** - Keep reading this page, we're going to go deeper into this
 * **Stop** - Ends the debugging session
 * **Open DevTools Widget Inspector Page** - Opens <a href="/flutter/devtools">Widget Inspector Tool</a>
 
@@ -38,7 +38,7 @@ To understand Hot Reload you need to understand how the <a href="/flutter/widget
 Hot Reload is used when you have made some changes to your code and you want to see them reflected in the debugging session you are running. When you press Hot Reload you will magically see your application update with all the changes you implemented. 
 
 ### What's going on under the hood?
-Flutter takes a looks through the <a href="/flutter/widget_tree">Widget Tree</a> to find the widgets that could have been affected. The only those widgets that got affected, get re-rendered. This is why it is so fast, and also why the current state of the applications doesn't get affected. With the default counter app you notice that the counter stays when you change the color of the app bar for example. That's because the portion of the <a href="/flutter/widget_tree">Widget Tree</a> that includes the `AppBar` is not the same where the counter is.
+Flutter takes a look through the <a href="/flutter/widget_tree">Widget Tree</a> to find the widgets that could have been affected. Only those widgets that got affected, get re-rendered. This is why it is so fast, and also why the current state of the applications doesn't get affected. With the default counter app, you notice that the counter stays when you change the color of the app bar for example. That's because the portion of the <a href="/flutter/widget_tree">Widget Tree</a> that includes the `AppBar` is not the same as where the counter is.
 
 > #### Side Note
 > Even if you updated something within the same Widget Tree section of the counter it will still retain the state. This is because the state is stored in something called an Element Tree. When I'm writing this the docs talking about Element Tree are not created. If I forgot about this doc, and you see a doc somewhere talking about Element Tree, please leave an issue so I can link to it here 😊

@@ -8,9 +8,9 @@ Every app needs to navigate between pages, and Flutter does this using the `Navi
 <iframe width="560" height="315" src="https://www.youtube.com/embed/fiLDVKLaJAE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## How Navigation works?
-The fundamental concept of navigation is the "stack". You can think of it like a stack of cards. The current page you are looking at is the card on the very top. There are two ways you can change which card you are looking at and that is by adding one on top (knows as "pushing" it on top), or by removing the top card ("popping" it off the top). 
+The fundamental concept of navigation is the "stack". You can think of it like a stack of cards. The current page you are looking at is the card on the very top. There are two ways you can change which card you are looking at and that is by adding one on top (known as "pushing" it on top), or by removing the top card ("popping" it off the top). 
 
-We will walk through a visual example that has three screens total.
+We will walk through a visual example that has three screens in total.
 1. Home Screen
 2. Second Screen
 3. Third Screen
@@ -27,25 +27,25 @@ Like in the card example let's say we want our app to navigate to a different sc
 
 Once this is executed, the current application and stack will look like this.
 
-![Second screen visible, with the current stack being 2 pages deep](/images/flutter_navigation_3.png)
+![Second screen is visible, with the current stack being 2 pages deep](/images/flutter_navigation_3.png)
 
 If we follow the same process and navigate to a third screen our application and stack will look like this.
 
-![Third screen visible, with the current stack being 3 pages deep](/images/flutter_navigation_4.png)
+![Third screen is visible, with the current stack being 3 pages deep](/images/flutter_navigation_4.png)
 
 ### Pop
-In order to go back and see the previous "Second Screen" you would need to "pop" the top most layer off of the current stack.
+To go back and see the previous "Second Screen" you would need to "pop" the topmost layer off of the current stack.
 
 ![arrow showing that the third screen will be removed](/images/flutter_navigation_5.png)
 
 This will result in the stack being 2 pages deep, and you can see the "Second Screen" again.
 
-![Second screen visible, with the current stack being 2 pages deep](/images/flutter_navigation_6.png)
+![Second screen is visible, with the current stack being 2 pages deep](/images/flutter_navigation_6.png)
 
 ## Basic Navigation
 
 ### Push
-That is the main concept of navigation within an application. In order to use it within your Flutter app, your code will look like this:
+That is the main concept of navigation within an application. To use it within your Flutter app, your code will look like this:
 ```dart
 Navigator.of(context).push(
     MaterialPageRoute(builder: (context) => const SecondPage())
@@ -54,22 +54,22 @@ Navigator.of(context).push(
 
 You will use the `Navigator` widget of the current [context](/flutter/buildcontext), and call the `push` method. This will add a new layer to the stack.
 
-That navigation "stack" that we were talking about is actually a stack of `Route` objects. These routes are the actual pathway to get to the specific screen. A `Route` can have some extra behaviors and properties. For example you can define what type of animation will be used when bringing in the new page.
+That navigation "stack" that we were talking about is actually a stack of `Route` objects. These routes are the actual pathways to get to the specific screen. A `Route` can have some extra behaviors and properties. For example, you can define what type of animation will be used when bringing in the new page.
 
 ### MaterialPageRoute
 In the code above we use a `MaterialPageRoute` which is a platform-specific `Route`. What does that mean?
 
-It will check what platform you are running (ex. iOS, Android), and perform the platform specific animations for transitioning between pages. 
+It will check what platform you are running (e.g. iOS, Android), and perform the platform-specific animations for transitioning between pages. 
 
 For Android, it zooms and fades, while for iOS it slides in from the right side.
 
 ### Pop
-In order to go back to the previous screen, the code will look like this:
+To go back to the previous screen, the code will look like this:
 ```dart
 Navigator.of(context).pop();
 ```
 ## Named Navigation
-If you're coming from web development, you will probably be familiar with routes. In the URL of the website you can see the route for the different pages. For example this page is on the `/navigation` route within the `/flutter` route.
+If you're coming from web development, you will probably be familiar with routes. In the URL of the website, you can see the route for the different pages. For example, this page is on the `/navigation` route within the `/flutter` route.
 
 You can assign these names within Flutter and maneuver throughout your application using them.
 
@@ -96,7 +96,7 @@ Within the `routes`, we define all our routes. So the `'/'` route will lead us t
 > Depending when you read this, you might notice `hungrimind.com` always redirects to `/flutter`. Eventually there will be a home page on the `'/'` route, but for now everything gets directed to `/flutter`.
 
 ### Push
-Using named routes allows your syntax to be a little cleaner, since your routes were already defined.
+Using named routes allows your syntax to be a little cleaner since your routes were already defined.
 ```dart
 Navigator.of(context).pushNamed('/second');
 ```

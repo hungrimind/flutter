@@ -1,6 +1,6 @@
 ---
 title: Integrating Apple Pay
-description: Tutorial on how to set up apple pay for your Flutter application
+description: Tutorial on how to set up Apple Pay for your Flutter application
 ---
 
 You know what is fun about building applications? Making money with them. One way to do that is to accept payments within the application.
@@ -17,7 +17,7 @@ Go to `Certificates, Identifiers, & Profiles` section on the Apple developer por
 
 ![app id](/images/flutter_apple_pay_1.png)
 
-Click the blue plus icon, to add a new App ID, select the `App IDs` option, and an app type. Once you get to the below screen, it's very important that you put the same exact bundle identifier as the bundle identifier on the actual app you're building (you can find it in XCode). Specifically for implementing Apple Pay, you need to select the `Apple Payment Processing` option. 
+Click the blue plus icon, to add a new App ID, select the `App IDs` option, and an app type. Once you get to the below screen, it's very important that you put the same bundle identifier as the bundle identifier on the actual app you're building (you can find it in XCode). Specifically for implementing Apple Pay, you need to select the `Apple Payment Processing` option. 
 
 ![register app id](/images/flutter_apple_pay_2.png)
 
@@ -30,15 +30,15 @@ And once again, click the blue plus icon to create a new Merchant ID. Make sure 
 
 ![register merchant id](/images/flutter_apple_pay_4.png)
 
-### 3. Create a Apple Pay Processing Certificate
+### 3. Create an Apple Pay Processing Certificate
 For the certificate, you need to switch to the `Certificates` and once again click the blue plus icon. Under `Services` select the `Apple Pay Payment Processing Certificate`, select the `Merchant ID` we just created and it will lead you to this screen, where you will need to create the certificate.
 
 ![apple pay payment processing certificate configuration screen](/images/flutter_apple_pay_5.png)
 
-### 4. Create a CSR for certificate
+### 4. Create a CSR for a certificate
 Once you have clicked the button highlighted above, you will need to upload a Certificate Signing Request (CSR) file from your Mac. To do this you need to open the `Keychain Access` application which should be installed on your Mac by default.
 
-In the toolbar select `Keychain Access > Certificate Assistant > Request a Certificate from a Certificate Authority` and you should see the below screen. Add your email, name, select `Saved to disk` and `Let me specify key pair information`.
+In the toolbar select `Keychain Access > Certificate Assistant > Request a Certificate from a Certificate Authority` and you should see the below screen. Add your email and name, select `Saved to disk` and `Let me specify key pair information`.
 
 ![a](/images/flutter_apple_pay_6.png)
 
@@ -54,7 +54,7 @@ Upload it to our `Apple Pay Processing Certificate`.
 
 ![d](/images/flutter_apple_pay_9.png)
 
-### 5. Add apple pay ability in XCode Project
+### 5. Add Apple Pay ability in XCode Project
 Now this last part is a bit easier. Open up your XCode project, select `Runner` and then `Signing & Capabilities`.
 
 ![e](/images/flutter_apple_pay_10.png)
@@ -67,14 +67,14 @@ Select `Apple Pay` and choose the `Merchant ID` that corresponds with this proje
 
 
 ## What is a Merchant ID and Certificate?
-What the heck did we just even do? In order to be able to accept payments you need to have an Apple Developer account and be a "verified" merchant able to accept payments. The Payment Processing Certificate is tied directly to that Merchant ID, and is used for encrypting the payment data that is being sent. The Apple Pay servers use the certificate to encrypt that payment data, and then your payment service provider can use it to decrypt that data. So all of this was done in the name of security.
+What the heck did we just even do? To be able to accept payments you need to have an Apple Developer account and be a "verified" merchant able to accept payments. The Payment Processing Certificate is tied directly to that Merchant ID and is used for encrypting the payment data that is being sent. The Apple Pay servers use the certificate to encrypt that payment data, and then your payment service provider can use it to decrypt that data. So all of this was done in the name of security.
 
 ## Add it to your Flutter App
-The first thing you will need is to add the <a href="https://pub.dev/packages/pay" target="_blank">`pay`</a> package to your flutter application. You will need to create an apple pay configuration. 
+The first thing you will need is to add the <a href="https://pub.dev/packages/pay" target="_blank">`pay`</a> package to your Flutter application. You will need to create an Apple Pay configuration. 
 
-You can find an example default configuration <a href="https://github.com/google-pay/flutter-plugin/blob/main/pay/example/lib/payment_configurations.dart#L27" target="_blank">here</a>. To get this configuration working you need to update the `merchantIdentifier` and `displayName` to the Merchant Identifiers we set up in <a href="#2-create-a-merchant-id">Step #2</a>. You can find the complete list of parameters on the  <a href="https://developer.apple.com/documentation/passkit/pkpaymentrequest" target="_blank">Apple Pay Documentation</a>.
+You can find an example default configuration <a href="https://github.com/google-pay/flutter-plugin/blob/main/pay/example/lib/payment_configurations.dart#L27" target="_blank">here</a>. To get this configuration working you need to update the `merchantIdentifier` and `displayName` to the Merchant Identifiers we set up in <a href="#2-create-a-merchant-id">Step #2</a>. You can find the complete list of parameters in the  <a href="https://developer.apple.com/documentation/passkit/pkpaymentrequest" target="_blank">Apple Pay Documentation</a>.
 
-And the very last step is to add the Apple Pay button that is provided by the <a href="https://pub.dev/packages/pay" target="_blank">`pay`</a> package to your application. Here is a basic one, but check out the <a href="https://pub.dev/packages/pay" target="_blank">`pay`</a> package for more details.
+The very last step is to add the Apple Pay button that is provided by the <a href="https://pub.dev/packages/pay" target="_blank">`pay`</a> package to your application. Here is a basic one, but check out the <a href="https://pub.dev/packages/pay" target="_blank">`pay`</a> package for more details.
 
 ```dart
 ApplePayButton(
