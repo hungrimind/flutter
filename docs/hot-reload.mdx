@@ -33,18 +33,18 @@ Now let's actually focus on the title of this doc: these two buttons
 ![arrow pointing at hot restart and reload buttons](/images/flutter_hot_reload_3.png)
 
 ## Hot Reload ⚡️
-To understand Hot Reload you need to understand how the <a href="/flutter/widget_tree">Widget Tree</a> works. 
+To understand Hot Reload you need to understand how the <a href="/flutter/widget-tree">Widget Tree</a> works. 
 
 Hot Reload is used when you have made some changes to your code and you want to see them reflected in the debugging session you are running. When you press Hot Reload you will magically see your application update with all the changes you implemented. 
 
 ### What's going on under the hood?
-Flutter takes a look through the <a href="/flutter/widget_tree">Widget Tree</a> to find the widgets that could have been affected. Only those widgets that got affected, get re-rendered. This is why it is so fast, and also why the current state of the applications doesn't get affected. With the default counter app, you notice that the counter stays when you change the color of the app bar for example. That's because the portion of the <a href="/flutter/widget_tree">Widget Tree</a> that includes the `AppBar` is not the same as where the counter is.
+Flutter takes a look through the <a href="/flutter/widget-tree">Widget Tree</a> to find the widgets that could have been affected. Only those widgets that got affected, get re-rendered. This is why it is so fast, and also why the current state of the applications doesn't get affected. With the default counter app, you notice that the counter stays when you change the color of the app bar for example. That's because the portion of the <a href="/flutter/widget-tree">Widget Tree</a> that includes the `AppBar` is not the same as where the counter is.
 
 > #### Side Note
 > Even if you updated something within the same Widget Tree section of the counter it will still retain the state. This is because the state is stored in something called an Element Tree. When I'm writing this the docs talking about Element Tree are not created. If I forgot about this doc, and you see a doc somewhere talking about Element Tree, please leave an issue so I can link to it here 😊
 
 ## Hot Restart 🔄
-Hot Reload was special because it retains the state of the application, and Hot Restart is here to throw all that away. That's the big difference between the two. Instead of only rerendering a portion of the <a href="/flutter/widget_tree">Widget Tree</a>, Hot Restart just throws the whole <a href="/flutter/widget_tree">Widget Tree</a> away and starts over. 
+Hot Reload was special because it retains the state of the application, and Hot Restart is here to throw all that away. That's the big difference between the two. Instead of only rerendering a portion of the <a href="/flutter/widget-tree">Widget Tree</a>, Hot Restart just throws the whole <a href="/flutter/widget-tree">Widget Tree</a> away and starts over. 
 
 With Hot Restart you are getting a brand new start to your application. Think of it as stopping the debug session and restarting it again, but way faster. 
 

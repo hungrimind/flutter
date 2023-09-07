@@ -8,9 +8,9 @@ BuildContext is something many developers don't fully understand, but they know 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/nfhncZXbFu8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## Quick Answer
-`BuildContext` is a way for your widget to know its own location within the <a href="/flutter/widget_tree">Widget Tree</a>.
+`BuildContext` is a way for your widget to know its own location within the <a href="/flutter/widget-tree">Widget Tree</a>.
 
-In other words, it gives you **context** about its location. If you were blindfolded and dropped off in a random city, you would look at the context around you to figure out where you are. Maybe you would check the street signs, the position of the sun, or some landmarks to figure out where you are. `BuildContext` are those signs and landmarks for each widget's location within the <a href="/flutter/widget_tree">Widget Tree</a>. 
+In other words, it gives you **context** about its location. If you were blindfolded and dropped off in a random city, you would look at the context around you to figure out where you are. Maybe you would check the street signs, the position of the sun, or some landmarks to figure out where you are. `BuildContext` are those signs and landmarks for each widget's location within the <a href="/flutter/widget-tree">Widget Tree</a>. 
 
 BuildContext is most commonly used to look up the Widget Tree and locate specific widgets. For example when you use `Theme.of(context)` or `Navigator.of(context)` you are looking up the Widget Tree to find the `Theme` or `Navigator` that coincides with the location of the current widget where you are calling those functions from.
 
