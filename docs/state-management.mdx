@@ -64,19 +64,19 @@ The most important thing is having **one source of truth** for all the data rela
 
 ```dart
 class CounterState {
- CounterState({
- required this.counter,
- });
+  CounterState({
+    required this.counter,
+  });
 
- final int counter;
+  final int counter;
 
- CounterState copyWith({
- int? counter,
- }) {
- return CounterState(
- counter: counter ?? this.counter,
- );
- }
+  CounterState copyWith({
+    int? counter,
+  }) {
+    return CounterState(
+      counter: counter ?? this.counter,
+    );
+  }
 }
 ```
 
@@ -106,18 +106,18 @@ First, you have to define the `InheritedWidget`. I will name it `Provider` in th
 
 ```dart
 class Provider extends InheritedWidget {
- const Provider(this.data, {Key? key, required Widget child}) : super(key: key, child: child);
+  const Provider(this.data, {Key? key, required Widget child}) : super(key: key, child: child);
 
- final CounterState data;
+  final CounterState data;
 
- static CounterState of(BuildContext context) {
- return context.dependOnInheritedWidgetOfExactType<Provider>()!.data;
- }
+  static CounterState of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<Provider>()!.data;
+  }
 
- @override
- bool updateShouldNotify(Provider oldWidget) {
- return data != oldWidget.data;
- }
+  @override
+  bool updateShouldNotify(Provider oldWidget) {
+    return data != oldWidget.data;
+  }
 }
 ```
 
