@@ -1,0 +1,77 @@
+---
+title: Master Rendering in Flutter
+description: Learn about how Flutter goes from a widget tree to showing UI elements on the screen
+---
+
+> Before reading this make sure you have a good understanding of [Widget Trees](/flutter/widget-tree).
+
+Whenever you write Flutter apps, you are building out a [Widget Tree](/flutter/widget-tree). Don't get me wrong, the trees are great, but when you open up a Flutter app you don't see any trees. So how does that widget tree become the actual visual objects on the screen?
+
+## What is Flutter?
+We need to get a little spiritual and zoom out to the very basics. What is Flutter actually? It's a "framework". That means that the words you type in your dart files are not the actual code that is being run on the devices. It's more so like a blueprint for what you want to happen. 
+
+## Element Tree
+This blueprint is used to create an Element Tree. You can think of an Element Tree as an "internal Widget Tree", a more detailed and more complex Widget Tree that is used internally within the Flutter framework. 
+
+![Element Tree](/images/element_tree.png)
+
+**Why is it more complex?**
+The element tree has a couple extra complexities that are hidden away from the developer. It manages the rebuilding of the widgets in an efficient way, and holds your state. You can read more about that in the [document about Keys](/flutter/keys#under-the-hood).
+
+It also converts that Widget Tree into something more complex in order to get ready for rendering.
+
+### Prepare to Render
+The Element Tree has two types of Elements: `ComponentElement` and `RenderObjectElement`. 
+
+A widget can get converted into just a `RenderObjectElement`, or it can be converted into a `ComponentElement` and multiple `RenderObjectElement` elements. This all depends on what kind of elements each widget is mapped to. 
+
+For example the `Row` widget needs to only layout it's contents and has a direct `RenderObjectElement` associated with it that handles layouts. While the [`Container` widget](https://github.com/flutter/flutter/blob/02efffc134ab4ce4ff50a9ddd86c832efdb80462/packages/flutter/lib/src/widgets/container.dart#L383) can become a whole bunch of elements in the Element Tree based on the properties you pass in. If you pass color and padding properties to the `Container` widget it will be converted into a `ColoredBox` widget nested within a `Padding` widget which have an associated `RenderObjectElement`. And both those `RenderObjectElement` will be held by the `ComponentElement`.
+
+![Element Tree](/images/widget_tree_under_hood.png)
+
+## Render Tree
+The last tree that Flutter uses is the Render Tree. To go from the Element Tree to the Render Tree, all the `RenderObjectElement` will turn into their `RenderObject` equivalents. 
+* `Row` turns into `RenderFlex`
+* `Padding` turns into `RenderPadding`
+* `ColoredBox` turns into `RenderDecoratedBox`
+
+![Render Tree](/images/render_tree.png)
+
+`RenderFlex`, `RenderPadding`, `RenderDecoratedBox`, as well as most `RenderObject` inherit `RenderBox`. 
+
+![Render Box Inherit](/images/render_flex_inherit.png)
+
+> **Note:** When you use Slivers those inherit `RenderSliver`.
+
+The `RenderBox` has two jobs:
+* Find where the widget should be painted.
+* Paint. 
+
+To find where it should be painted, it uses the Box Constraint Model.
+
+### Box Constraint Model
+The underlying mechanism for rendering your widgets onto the screen is called the Box Constraint Model. This is what is used by the `RenderBox`. 
+
+The box constraint model has 3 simple rules:
+1. Constraints go down.
+2. Sizes go up.
+3. Parent sets position. 
+
+These are all talking in terms of the Render Tree. The parent widget tells it's child what is the maximum size it can be (constraints), the child tells the parent what size within those constraints it will actually be, and the parent says where they will be located.
+
+![Understanding Constraints](/images/constraints.png)
+
+The constraint for the widget at the top of the render tree is the full screen, then the tree gets traversed downward, it's location is set using the box constraint model, and then it get's painted onto the screen. 
+
+This is how your app turns into actual pixels.
+
+> This model doesn't work when the parent doesn't know what the constraints are. This happens when you have an unknowable list of items that extends beyond the screen.
+> This is what Slivers are for.
+
+## The Full Story
+All these different trees are done to make the developer experience as fun and simple as possible. These complexities are abstracted so you don't have to think about how your `Container` with the padding property becomes a `RenderPadding` while you're writing the day to day code. 
+
+But understanding the underlying mechanisms can help you decide which widget you should be using, and what could be the root issue of a bug you are facing. 
+
+
+
