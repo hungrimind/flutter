@@ -1,0 +1,67 @@
+---
+title: Mastering Slivers in Flutter
+description: Learn the underlying concept of Slivers and how you should use them.
+---
+
+Flutter works by using the screen as a canvas and *painting* the widgets on that canvas. And just like painting something in real life, everything is great as long as you are painting on that canvas. However, when you add dynamic scrolling to your app, you are trying to paint something that *might* not be on the canvas. For this you need a separate mechanism from the default [Box Constraint Model](/flutter/rendering#box-constraint-model) in Flutter, and this is called Slivers.
+
+## How Flutter Renders Normally
+I wrote a [full document](/flutter/rendering) about how Flutter renders in most situations. 
+
+The TLDR is that it creates two other trees (Element Tree and Render Tree), which then lays out your application using the Box Constraint Model. The Box Constraint Model has the parent define the constraints and the position, and the child defines its own size. 
+
+![Understanding Constraints](/images/constraints.png)
+
+It uses something called a `RenderBox` which, creates little boxes of constraints within your application starting with the box of the whole screen. So the very outer box and the maximum size a widget can be within the Render Tree is the full screen of the device. Do you see the problem here?
+
+## The Problem with Scrolling
+The box model works great when the size of your widget is contained within the screen. However, when you introduce some scrolling, you have widgets that can be off the screen.
+
+So we need to give the Flutter rendering engine more information to render those widgets appropriately when it is needed.
+
+![Sliver Scrolling](/images/flutter/sliver_layout.png)
+
+### Sliver Mechanism
+Slivers are more complex because they need more information to be able to paint everything. 
+
+Where the box model uses [BoxConstraints](https://api.flutter.dev/flutter/rendering/BoxConstraints-class.html), which gives a minimum and maximum height and width, the sliver model uses [SliverConstraints](https://api.flutter.dev/flutter/rendering/SliverConstraints-class.html), which needs more information like the scrolling direction, and how much has been scrolled. 
+
+Where the box model uses [Size](), which basically just gives an offset, the sliver model uses [SliverGeometry](), which needs more information like where the next sliver is.
+
+## How to Use Slivers
+Slivers are relatively similar to use to a `ListView`. In fact, the `ListView` widget is a `CustomScrollView` widget under the hood.
+
+### CustomScrollView
+`CustomScrollView` is the wrapper you use around all the slivers you build out. It defines which will have a custom scrolling logic, just like the name suggests and you will add all your slivers inside this widget.
+
+### Sliver Widgets
+Every Sliver widget starts with the word "Sliver" beforehand: SliverPadding, SliverList, SliverAppBar, etc. 
+
+And you will notice, instead of these widgets having `children` like all the box model widgets, they are called `slivers`. 
+
+```dart
+CustomScrollView(
+  slivers: <Widget>[
+    const SliverAppBar(
+      title: Text('SliverAppBar'),
+      expandedHeight: 200,
+      floating: true,
+    ),
+    SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index) {
+          return ListTile(
+            title: Text('Item $index'),
+          );
+        },
+        childCount: 20,
+      ),
+    ),
+  ],
+),
+```
+
+## The Full Story
+The Box Constraints Model is a very efficient and fast way to lay out Flutter apps and works for all cases except when the content you are trying to show doesn't fit in the viewport (and needs to scroll). 
+
+In this case, slivers are the way to go, and they work similarly, except they need a little more information. 
