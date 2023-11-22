@@ -15,7 +15,6 @@ class MyApp extends StatelessWidget {
         colorScheme: const ColorScheme.light(
           primary: Colors.black,
         ),
-        useMaterial3: true,
       ),
     );
   }
