@@ -1,6 +1,8 @@
 ---
-title: Mastering Slivers in Flutter
+title: Slivers in Flutter
 description: Learn the underlying concept of Slivers and how you should use them.
+postSlug: flutter/slivers
+pubDatetime: 2023-10-20
 ---
 
 Flutter works by using the screen as a canvas and *painting* the widgets on that canvas. And just like painting something in real life, everything is great as long as you are painting on that canvas. However, when you add dynamic scrolling to your app, you are trying to paint something that *might* not be on the canvas. For this you need a separate mechanism from the default [Box Constraint Model](/flutter/rendering#box-constraint-model) in Flutter, and this is called Slivers.
